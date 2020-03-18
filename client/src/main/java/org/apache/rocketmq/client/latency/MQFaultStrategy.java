@@ -55,7 +55,14 @@ public class MQFaultStrategy {
         this.sendLatencyFaultEnable = sendLatencyFaultEnable;
     }
 
+    /**
+     * 根据topic发布消息，选择一个消息队列
+     * @param tpInfo
+     * @param lastBrokerName
+     * @return
+     */
     public MessageQueue selectOneMessageQueue(final TopicPublishInfo tpInfo, final String lastBrokerName) {
+        // 容错策略选择消息队列逻辑。优先获取可用队列，其次选择一个broker获取队列，最差返回任意broker的一个队列。
         if (this.sendLatencyFaultEnable) {
             try {
                 int index = tpInfo.getSendWhichQueue().getAndIncrement();
@@ -85,20 +92,32 @@ public class MQFaultStrategy {
             } catch (Exception e) {
                 log.error("Error occurred when selecting message queue", e);
             }
-
+            // 选择一个消息队列，不考虑队列的可用性
             return tpInfo.selectOneMessageQueue();
         }
-
+        // 获得 lastBrokerName 对应的一个消息队列，不考虑该队列的可用性
         return tpInfo.selectOneMessageQueue(lastBrokerName);
     }
 
+    /**
+     * 更新延迟容错信息
+     * @param brokerName
+     * @param currentLatency 延迟
+     * @param isolation 是否隔离。当开启隔离时，默认延迟为30000。目前主要用于发送消息异常时
+     */
     public void updateFaultItem(final String brokerName, final long currentLatency, boolean isolation) {
         if (this.sendLatencyFaultEnable) {
             long duration = computeNotAvailableDuration(isolation ? 30000 : currentLatency);
+            // LatencyFaultToleranceImpl#updateFaultItem
             this.latencyFaultTolerance.updateFaultItem(brokerName, currentLatency, duration);
         }
     }
 
+    /**
+     * 计算延迟对应的不可用时间
+     * @param currentLatency 延迟
+     * @return 不可用时间
+     */
     private long computeNotAvailableDuration(final long currentLatency) {
         for (int i = latencyMax.length - 1; i >= 0; i--) {
             if (currentLatency >= latencyMax[i])
