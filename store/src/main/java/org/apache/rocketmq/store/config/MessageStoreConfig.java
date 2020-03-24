@@ -22,6 +22,7 @@ import org.apache.rocketmq.store.ConsumeQueue;
 
 public class MessageStoreConfig {
     //The root directory in which the log data is kept
+    // 貌似有这个注解的 应用启动时会打印各自角色对应的重要属性
     @ImportantField
     private String storePathRootDir = System.getProperty("user.home") + File.separator + "store";
 
@@ -31,7 +32,7 @@ public class MessageStoreConfig {
         + File.separator + "commitlog";
 
     // CommitLog file size,default is 1G
-    private int mappedFileSizeCommitLog = 1024 * 1024 * 1024;
+    private int mappedFileSizeCommitLog = 1024 * 1024 * 1024; // 这里没用位运算我是没想到的
     // ConsumeQueue file size,default is 30W
     private int mappedFileSizeConsumeQueue = 300000 * ConsumeQueue.CQ_STORE_UNIT_SIZE;
     // enable consume queue ext
@@ -55,13 +56,14 @@ public class MessageStoreConfig {
     /**
      * introduced since 4.0.x. Determine whether to use mutex reentrantLock when putting message.<br/>
      * By default it is set to false indicating using spin lock when putting message.
+     * 自旋锁更轻量级,commitLog初始化的时候就会从这里判断使用的写锁为自旋锁还是独占锁
      */
     private boolean useReentrantLockWhenPutMessage = false;
 
     // Whether schedule flush,default is real-time
     @ImportantField
     private boolean flushCommitLogTimed = false;
-    // ConsumeQueue flush interval
+    // ConsumeQueue flush interval(间隔)
     private int flushIntervalConsumeQueue = 1000;
     // Resource reclaim interval
     private int cleanResourceInterval = 10000;
@@ -126,6 +128,7 @@ public class MessageStoreConfig {
     @ImportantField
     private FlushDiskType flushDiskType = FlushDiskType.ASYNC_FLUSH;
     private int syncFlushTimeout = 1000 * 5;
+    // 延迟消息的几个等级 固定不可变
     private String messageDelayLevel = "1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h";
     private long flushDelayOffsetInterval = 1000 * 10;
     @ImportantField

@@ -33,6 +33,8 @@ import org.apache.rocketmq.store.config.BrokerRole;
 
 /**
  * Create MappedFile in advance
+ * 通过预分配服务AllocateMapedFileService异步预创建下一个MapedFile文件，
+ * 这样下次创建新文件请求就不要等待，因为创建文件特别是一个1G的文件还是有点耗时的
  */
 public class AllocateMappedFileService extends ServiceThread {
     private static final InternalLogger log = InternalLoggerFactory.getLogger(LoggerName.STORE_LOGGER_NAME);

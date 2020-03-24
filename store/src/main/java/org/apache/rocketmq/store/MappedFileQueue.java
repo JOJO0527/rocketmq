@@ -209,9 +209,15 @@ public class MappedFileQueue {
                 + UtilAll.offset2FileName(createOffset + this.mappedFileSize);
             MappedFile mappedFile = null;
 
+            /**
+             * 通过预分配服务AllocateMapedFileService异步预创建下一个MapedFile文件，
+             * 这样下次创建新文件请求就不要等待，因为创建文件特别是一个1G的文件还是有点耗时的
+             */
             if (this.allocateMappedFileService != null) {
-                mappedFile = this.allocateMappedFileService.putRequestAndReturnMappedFile(nextFilePath,
-                    nextNextFilePath, this.mappedFileSize);
+                mappedFile = this.allocateMappedFileService.putRequestAndReturnMappedFile(
+                        nextFilePath,
+                        nextNextFilePath,
+                        this.mappedFileSize);
             } else {
                 try {
                     mappedFile = new MappedFile(nextFilePath, this.mappedFileSize);
