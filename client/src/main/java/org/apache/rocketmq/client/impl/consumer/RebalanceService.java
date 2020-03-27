@@ -22,10 +22,12 @@ import org.apache.rocketmq.common.ServiceThread;
 import org.apache.rocketmq.logging.InternalLogger;
 
 public class RebalanceService extends ServiceThread {
+    // 等待间隔 毫秒
     private static long waitInterval =
         Long.parseLong(System.getProperty(
             "rocketmq.client.rebalance.waitInterval", "20000"));
     private final InternalLogger log = ClientLogger.getLog();
+    // MQClient
     private final MQClientInstance mqClientFactory;
 
     public RebalanceService(MQClientInstance mqClientFactory) {

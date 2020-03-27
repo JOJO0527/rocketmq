@@ -118,6 +118,11 @@ public class DefaultMQProducerImpl implements MQProducerInner {
         this(defaultMQProducer, null);
     }
 
+    /**
+     * 暴露给用户的构建producer API : new DefaultMQProdcer(String GroupName)构造方法中最后会调此犯法
+     * @param defaultMQProducer
+     * @param rpcHook  RPC hook to execute per each remoting command execution.
+     */
     public DefaultMQProducerImpl(final DefaultMQProducer defaultMQProducer, RPCHook rpcHook) {
         this.defaultMQProducer = defaultMQProducer;
         this.rpcHook = rpcHook;
@@ -566,6 +571,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
             String[] brokersSent = new String[timesTotal];
             for (; times < timesTotal; times++) {
                 String lastBrokerName = null == mq ? null : mq.getBrokerName();
+                // 选择一条queue 此queue是topic的分片
                 MessageQueue mqSelected = this.selectOneMessageQueue(topicPublishInfo, lastBrokerName);
                 if (mqSelected != null) {
                     mq = mqSelected;
@@ -687,8 +693,11 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                 null).setResponseCode(ClientErrorCode.NOT_FOUND_TOPIC_EXCEPTION);
     }
 
+    // 尝试去找路由发布信息
     private TopicPublishInfo tryToFindTopicPublishInfo(final String topic) {
+        // 先从缓存中获取
         TopicPublishInfo topicPublishInfo = this.topicPublishInfoTable.get(topic);
+        // 没有则去namesrv里找
         if (null == topicPublishInfo || !topicPublishInfo.ok()) {
             this.topicPublishInfoTable.putIfAbsent(topic, new TopicPublishInfo());
             this.mQClientFactory.updateTopicRouteInfoFromNameServer(topic);
@@ -736,7 +745,7 @@ public class DefaultMQProducerImpl implements MQProducerInner {
                     topicWithNamespace = true;
                 }
                 int sysFlag = 0;
-                //超过4K消息压缩 压缩消息标记
+                // 超过4K消息压缩 压缩消息标记
                 boolean msgBodyCompressed = false;
                 if (this.tryToCompressMessage(msg)) {
                     sysFlag |= MessageSysFlag.COMPRESSED_FLAG;

@@ -32,6 +32,7 @@ public class AsyncProducer {
 
         DefaultMQProducer producer = new DefaultMQProducer("Jodie_Daily_test");
         producer.start();
+        // 异步发送失败重试次数 默认为2
         producer.setRetryTimesWhenSendAsyncFailed(0);
 
         int messageCount = 100;
@@ -61,6 +62,7 @@ public class AsyncProducer {
                 e.printStackTrace();
             }
         }
+        // countDownLatch减到0或者超出5秒就唤醒主线程
         countDownLatch.await(5, TimeUnit.SECONDS);
         producer.shutdown();
     }

@@ -223,6 +223,10 @@ public class MQClientInstance {
         return mqList;
     }
 
+    /**
+     * 启动MQclient，调用的是MQClientAPIImpl.start()
+     * @throws MQClientException
+     */
     public void start() throws MQClientException {
 
         synchronized (this) {
@@ -642,6 +646,7 @@ public class MQClientInstance {
                             // Update Pub info
                             {
                                 TopicPublishInfo publishInfo = topicRouteData2TopicPublishInfo(topic, topicRouteData);
+                                // DefaultMQProducerImpl#tryToFindTopicPublishInfo判断依据
                                 publishInfo.setHaveTopicRouterInfo(true);
                                 Iterator<Entry<String, MQProducerInner>> it = this.producerTable.entrySet().iterator();
                                 while (it.hasNext()) {
@@ -975,6 +980,7 @@ public class MQClientInstance {
     }
 
     public void doRebalance() {
+        // 遍历当前client包含的consumerTable（consumer集合），执行messageQueue分配
         for (Map.Entry<String, MQConsumerInner> entry : this.consumerTable.entrySet()) {
             MQConsumerInner impl = entry.getValue();
             if (impl != null) {

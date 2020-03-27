@@ -146,7 +146,7 @@ public class DefaultLitePullConsumerImpl implements MQConsumerInner {
         this.defaultLitePullConsumer = defaultLitePullConsumer;
         this.rpcHook = rpcHook;
         this.scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(
-            this.defaultLitePullConsumer.getPullThreadNums(),
+            this.defaultLitePullConsumer.getPullThreadNums(), // 20
             new ThreadFactoryImpl("PullMsgThread-" + this.defaultLitePullConsumer.getConsumerGroup())
         );
         this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {

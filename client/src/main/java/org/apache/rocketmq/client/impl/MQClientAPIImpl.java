@@ -236,6 +236,7 @@ public class MQClientAPIImpl {
     }
 
     public void start() {
+        // 启动netty线程
         this.remotingClient.start();
     }
 

@@ -47,7 +47,7 @@ public class DefaultLitePullConsumer extends ClientConfig implements LitePullCon
     private String consumerGroup;
 
     /**
-     * Long polling mode, the Consumer connection max suspend time, it is not recommended to modify
+     * Long polling(轮询) mode, the Consumer connection max suspend(暂停) time, it is not recommended to modify
      */
     private long brokerSuspendMaxTimeMillis = 1000 * 20;
 

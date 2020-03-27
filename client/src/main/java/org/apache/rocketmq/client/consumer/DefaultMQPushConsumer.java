@@ -46,11 +46,12 @@ import org.apache.rocketmq.remoting.RPCHook;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 
 /**
- * In most scenarios, this is the mostly recommended class to consume messages.
+ * In most scenarios(情景), this is the mostly recommended class to consume messages.
  * </p>
  *
  * Technically speaking, this push client is virtually a wrapper of the underlying pull service. Specifically, on
  * arrival of messages pulled from brokers, it roughly invokes the registered callback handler to feed the messages.
+ * ----------RocketMq的推模式并不是实际意义上的broker向consumer推送，只是对pull的一层封装---------------------
  * </p>
  *
  * See quickstart/Consumer in the example module for a typical usage.

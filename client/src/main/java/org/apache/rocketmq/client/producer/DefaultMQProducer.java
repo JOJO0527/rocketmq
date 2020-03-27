@@ -140,6 +140,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      * Constructor specifying producer group.
      *
      * @param producerGroup Producer group, see the name-sake field.
+     * 常用producer构造方法
      */
     public DefaultMQProducer(final String producerGroup) {
         this(null, producerGroup, null);
@@ -264,6 +265,7 @@ public class DefaultMQProducer extends ClientConfig implements MQProducer {
      * to invoke this method before sending or querying messages. </strong> </p>
      *
      * @throws MQClientException if there is any unexpected error.
+     * 暴露给用户的启动producer的API
      */
     @Override
     public void start() throws MQClientException {

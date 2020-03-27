@@ -889,6 +889,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
 
     public void subscribe(String topic, String fullClassName, String filterClassSource) throws MQClientException {
         try {
+            // 创建订阅数据
             SubscriptionData subscriptionData = FilterAPI.buildSubscriptionData(this.defaultMQPushConsumer.getConsumerGroup(),
                 topic, "*");
             subscriptionData.setSubString(fullClassName);
@@ -896,6 +897,7 @@ public class DefaultMQPushConsumerImpl implements MQConsumerInner {
             subscriptionData.setFilterClassSource(filterClassSource);
             this.rebalanceImpl.getSubscriptionInner().put(topic, subscriptionData);
             if (this.mQClientFactory != null) {
+                // 通过心跳包把consumer同步到broker上
                 this.mQClientFactory.sendHeartbeatToAllBrokerWithLock();
             }
 
